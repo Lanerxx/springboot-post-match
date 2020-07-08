@@ -24,22 +24,19 @@ public class Enterprise {
         MALE, FEMALE,NONE
     }
     public enum SchoolRank{
-        NONE,
-
+        _985,_211,PROVINCIAL_KEY,GENERAL_UNDERGRADUATE,
+        JUNIOR_COLLEGE,HIGHER_VOCATIONAL_COLLEGE,OTHER
     }
     public enum Education{
-        NONE,
-        PRIMARY_SCHOOL_ADUCATION,JUNIOR_HIGH_SCHOOL_ADUCATION,
-        TECHNICAL_SECONDARY_SCHOOL_ADUCATION,
-        HIGH_SCHOOL_ADUCATION,JUNIOR_COLLEGE_EDUCATION,
-        BACHELOR_DEGREE,MASTER_DEGREE,DOCTOR_DEGREE,
-        POSTDOCTORAL_DEGREE,ACADEMICIAN_EDUCATION
+        DOCTOR,MASTER,BACHELOR,HIGHER_VOCATIONAL_COLLEGE,OTHER
     }
     public enum ForeignLanguageProficiency{
-        NONE
+        ENGLISH_CET_6,ENGLISH_CET_4,ENGLISH_Foreign_Exchange_Experience,
+        JAPANESE_N2,JAPANESE_N3,FRENCH,RUSSIAN,ARABIC,SPANISH,
+        OTHER,NONE
     }
     public enum EnterpriseNature{
-        NONE
+        STATE_OWNED,FOREIGN,PRIVATE_ENTERPRISE
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
