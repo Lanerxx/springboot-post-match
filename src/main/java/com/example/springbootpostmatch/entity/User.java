@@ -26,10 +26,8 @@ public class User {
     private Integer id;
 
     //Student number or Enterprise number
-    @Column(unique = true)
-    @NotNull(message = "The number cannot be empty")
-    @Min(value = 99999, message = "Numbers should be at least six digits")
-    private Integer number;
+    @Size(min = 6, message = "Numbers should be at least six digits")
+    private String number;
 
     @Size(min = 6, message = "User password length must not be less than {min}")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
