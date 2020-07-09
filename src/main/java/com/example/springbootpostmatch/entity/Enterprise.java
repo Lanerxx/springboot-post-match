@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -41,6 +42,7 @@ public class Enterprise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotNull
     private String name;
     private String detail;
     private SchoolRank schoolRankCut;
@@ -55,7 +57,6 @@ public class Enterprise {
     private String location;
     private LocalDate graduationDate;
     private int phoneNumber;
-
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.REMOVE)
     private List<Post> posts;

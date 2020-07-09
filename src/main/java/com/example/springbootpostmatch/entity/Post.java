@@ -1,11 +1,11 @@
 package com.example.springbootpostmatch.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,16 +24,19 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @NotNull
     private String name;
+    @NotNull
     private String detail;
     private int count;
     private int salary;
+    @NotNull
     private LocalDateTime startTime;
+    @NotNull
     private LocalDateTime endTime;
 
     @ManyToOne
     private Enterprise enterprise;
-
 
     @Column(columnDefinition = "timestamp default current_timestamp",
             insertable = false,

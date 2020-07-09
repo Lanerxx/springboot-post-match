@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -30,11 +32,11 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private double weightedGrade;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @MapsId
     private User user;
+    @NotNull
     private String name;
     private Gender gender;
     private LocalDate birthday;
@@ -54,7 +56,6 @@ public class Student {
     private String skill;
     private int paperCount;
     private int workExperience;
-
 
     @Column(columnDefinition = "timestamp default current_timestamp",
             insertable = false,
