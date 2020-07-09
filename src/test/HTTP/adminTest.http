@@ -1,0 +1,24 @@
+
+###
+//ADMNI:add enterprise
+POST http://localhost:8080/api/admin/enterprise
+Content-Type: application/json
+authorization: {{token}}
+
+{
+  "name": "烟台企业"
+}
+###
+//ADMIN:login
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "name": "LANER",
+  "number": "A10000",
+  "password": "A10000"
+}
+
+> {% client.global.set("token", response.headers.valueOf("authorization")); %}
+
+###
