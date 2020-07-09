@@ -10,8 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends BaseRepository<User,Integer>{
-    Optional<User> findByNumber(int number);
-    Optional<User> findByName(String name);
+    Optional<User> findByNumber(String number);
 
     @Modifying
     @Query("UPDATE User u SET u.password=:password WHERE u.id=:id")
