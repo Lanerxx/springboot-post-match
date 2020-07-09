@@ -15,6 +15,7 @@ public interface StudentRepository extends BaseRepository<Student, Integer> {
     Optional<List<Student>> list();
 
     Optional<Student> findById (int  id);
+    Optional<Student> findByName(String name);
 
     @Query("SELECT s FROM Student  s WHERE s.user.number=:number")
     Optional<Student> getStudentsByUserNumber (@Param("number")int number);
