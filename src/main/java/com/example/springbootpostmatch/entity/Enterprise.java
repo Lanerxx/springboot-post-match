@@ -42,6 +42,9 @@ public class Enterprise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @MapsId
+    private User user;
     @NotNull
     private String name;
     private String detail;
