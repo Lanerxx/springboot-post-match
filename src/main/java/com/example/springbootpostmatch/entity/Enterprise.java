@@ -21,21 +21,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 @JsonIgnoreProperties({"posts"})
 public class Enterprise {
-    public enum GenderCut {
-        MALE, FEMALE,NONE
-    }
-    public enum SchoolRank{
-        _985,_211,PROVINCIAL_KEY,GENERAL_UNDERGRADUATE,
-        JUNIOR_COLLEGE,HIGHER_VOCATIONAL_COLLEGE,OTHER
-    }
-    public enum Education{
-        DOCTOR,MASTER,BACHELOR,HIGHER_VOCATIONAL_COLLEGE,OTHER
-    }
-    public enum ForeignLanguageProficiency{
-        ENGLISH_CET_6,ENGLISH_CET_4,ENGLISH_Foreign_Exchange_Experience,
-        JAPANESE_N2,JAPANESE_N3,FRENCH,RUSSIAN,ARABIC,SPANISH,
-        OTHER,NONE
-    }
     public enum EnterpriseNature{
         STATE_OWNED,FOREIGN,PRIVATE_ENTERPRISE
     }
@@ -48,18 +33,18 @@ public class Enterprise {
     @NotNull
     private String name;
     private String detail;
-    private SchoolRank schoolRankCut;
-    private Education educationCut;
-    private ForeignLanguageProficiency foreignLanguageProficiency;
+    private Student.SchoolRank schoolRankCut;
+    private Student.Education educationCut;
+    private Student.ForeignLanguageProficiency foreignLanguageProficiency;
     private String majorCut;
-    private GenderCut genderCut;
+    private Student.Gender genderCut;
     private int lowestSalery;
     private int highestSalery;
     private EnterpriseNature enterpriseNature;
     private String industry;
     private String location;
     private LocalDate graduationDate;
-    private int phoneNumber;
+    private String phoneNumber;
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.REMOVE)
     private List<Post> posts;

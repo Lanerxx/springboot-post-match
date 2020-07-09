@@ -8,13 +8,14 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @Entity
 public class Student {
     public enum Gender {
-        MALE, FEMALE
+        MALE, FEMALE,NONE
     }
     public enum SchoolRank{
         _985,_211,PROVINCIAL_KEY,GENERAL_UNDERGRADUATE,
@@ -24,10 +25,7 @@ public class Student {
         DOCTOR,MASTER,BACHELOR,HIGHER_VOCATIONAL_COLLEGE,OTHER
     }
     public enum ForeignLanguageProficiency{
-        ENGLISH_CET_6,ENGLISH_CET_4,ENGLISH_Foreign_Exchange_Experience,
-        JAPANESE_N2,JAPANESE_N3,FRENCH,RUSSIAN,ARABIC,SPANISH,
-        OTHER,NONE
-
+        ENGLISH_CET_6,ENGLISH_CET_4,ENGLISH_Foreign_Exchange_Experience,NONE
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +49,7 @@ public class Student {
     private String expectedPosition;
     private String expectedIndustry;
     private String employmentIntentionPlace;
-    private int phoneNumber;
+    private String phoneNumber;
     private String majorCourse;
     private String skill;
     private int paperCount;
