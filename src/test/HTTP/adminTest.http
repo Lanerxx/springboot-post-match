@@ -1,12 +1,33 @@
+###
+//ADMIN:delete student
+DELETE http://localhost:8080/api/admin/student/5
+Accept: application/json
+authorization: {{token}}
 
 ###
+//ADMNI:add student
+POST http://localhost:8080/api/admin/student
+Content-Type: application/json
+authorization: {{token}}
+
+{
+  "name": "脆脆鲨"
+}
+###
+//ADMIN:delete enterprise
+DELETE http://localhost:8080/api/admin/enterprise/6
+Accept: application/json
+authorization: {{token}}
+
+###
+
 //ADMNI:add enterprise
 POST http://localhost:8080/api/admin/enterprise
 Content-Type: application/json
 authorization: {{token}}
 
 {
-  "name": "烟台企业"
+  "name": "串串香企业"
 }
 ###
 //ADMIN:login

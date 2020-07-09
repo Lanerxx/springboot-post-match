@@ -1,0 +1,40 @@
+PATCH http://localhost:8080/api/student/information
+Content-Type: application/json
+authorization: {{token}}
+
+{
+  "student": {
+    "graduationSchoolName": "东北林业大学",
+    "major": "软件工程",
+    "nativePlace": "湖北省",
+    "expectedSalary": 20000,
+    "expectedPosition": "Python后端开发师",
+    "paperCount": 1,
+    "workExperience": 1,
+    "phoneNumber": "13907251456"
+  },
+  "gender":"男" ,
+  "schoolRank": "211",
+  "education": "硕士",
+  "foreignLanguageProficiency":"国外交流经验"
+
+}
+
+###
+GET http://localhost:8080/api/student/index
+Accept: application/json
+authorization: {{token}}
+
+###
+//STUDENT:login
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "number": "S100007",
+  "password": "S100007"
+}
+
+> {% client.global.set("token", response.headers.valueOf("authorization")); %}
+
+###
