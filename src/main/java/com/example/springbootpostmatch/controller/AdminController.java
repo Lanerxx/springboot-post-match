@@ -1,5 +1,7 @@
 package com.example.springbootpostmatch.controller;
 
+import com.example.springbootpostmatch.component.vo.EnterpriseInoVo;
+import com.example.springbootpostmatch.component.vo.StudentInoVo;
 import com.example.springbootpostmatch.entity.Enterprise;
 import com.example.springbootpostmatch.entity.Student;
 import com.example.springbootpostmatch.entity.User;
@@ -37,14 +39,19 @@ public class AdminController {
     @PostMapping("enterprise")
     public Map addEnterprise(@Valid @RequestBody Enterprise enterprise){
         Enterprise e = new Enterprise();
-        if(enterprise.getName()!=null){
+        if(enterprise.getName()!=null && enterprise.getPhoneNumber()!=null){
+            if (enterpriseService.getEnterprise(enterprise.getPhoneNumber(),enterprise.getName())!=null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "企业已经存在！");
+            }
             User u = new User();
             u.setRole(User.Role.ENTERPRISE);
             e.setName(enterprise.getName());
+            e.setPhoneNumber(enterprise.getPhoneNumber());
             e.setUser(u);
             enterpriseService.addEnterprise(e);
-            int id  = enterpriseService.getEnterprise(enterprise.getName()).getId();
-            String num = "T" + number + id;
+            int id  = enterpriseService.getEnterprise(enterprise.getPhoneNumber(),enterprise.getName()).getId();
+            String num = "E" + number + id;
             User u1 = userService.getUserByID(id);
             u1.setNumber(num);
             u1.setPassword(encoder.encode(num));
@@ -56,6 +63,76 @@ public class AdminController {
         }
         return Map.of(
                 "enterprise",e
+        );
+    }
+
+    @PostMapping("enterprises")
+    public Map addEnterprises(@Valid @RequestBody List<Enterprise> enterprises){
+        enterprises.forEach(enterprise -> {
+            Enterprise e = new Enterprise();
+            if(enterprise.getName()!=null && enterprise.getPhoneNumber()!=null){
+                if (enterpriseService.getEnterprise(enterprise.getPhoneNumber(),enterprise.getName())!=null){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "企业已经存在！");
+                }
+                User u = new User();
+                u.setRole(User.Role.ENTERPRISE);
+                e.setName(enterprise.getName());
+                e.setPhoneNumber(enterprise.getPhoneNumber());
+                e.setUser(u);
+                enterpriseService.addEnterprise(e);
+                int id  = enterpriseService.getEnterprise(enterprise.getPhoneNumber(),enterprise.getName()).getId();
+                String num = "E" + number + id;
+                User u1 = userService.getUserByID(id);
+                u1.setNumber(num);
+                u1.setPassword(encoder.encode(num));
+                userService.updateUser(u1);
+            }
+            else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Name, number cannot be empty.");
+            }
+        });
+        List<Enterprise> es = enterpriseService.listEnterprises();
+        return Map.of(
+                "enterprises",es
+        );
+    }
+
+    //批量注册企业并填入相应信息，实际情况不可用，仅用于为测试添加信息
+    @PostMapping("enterprisesInformation")
+    public Map addEnterprisesInformation(@Valid @RequestBody List<EnterpriseInoVo> enterpriseInoVos){
+        enterpriseInoVos.forEach(enterpriseInoVo -> {
+            Enterprise e = new Enterprise();
+            Enterprise enterprise = enterpriseInoVo.getEnterprise();
+            if(enterprise.getName()!=null && enterprise.getPhoneNumber()!=null){
+                if (enterpriseService.getEnterprise(enterprise.getPhoneNumber(),enterprise.getName())!=null){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "企业已经存在！");
+                }
+                User u = new User();
+                u.setRole(User.Role.ENTERPRISE);
+                e.setName(enterprise.getName());
+                e.setPhoneNumber(enterprise.getPhoneNumber());
+                e.setUser(u);
+                enterpriseService.addEnterprise(e);
+                log.debug("controller :{}+{}", enterprise.getPhoneNumber(),enterprise.getName());
+                int id  = enterpriseService.getEnterprise(enterprise.getPhoneNumber(),enterprise.getName()).getId();
+                String num = "E" + number + id;
+                User u1 = userService.getUserByID(id);
+                u1.setNumber(num);
+                u1.setPassword(encoder.encode(num));
+                userService.updateUser(u1);
+                enterpriseService.updateEnterprise(enterpriseInoVo, id);
+            }
+            else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Name, number cannot be empty.");
+            }
+        });
+        List<Enterprise> es = enterpriseService.listEnterprises();
+        return Map.of(
+                "enterprises",es
         );
     }
 
@@ -77,11 +154,14 @@ public class AdminController {
         );
     }
 
-
     @PostMapping("student")
     public Map addStudent(@Valid @RequestBody Student student){
         Student s = new Student();
-        if(student.getName() != null){
+        if(student.getName() != null && student.getPhoneNumber()!=null){
+            if (studentService.getStudent(student.getPhoneNumber(), student.getName())!=null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "学生已经存在！");
+            }
             User u = new User();
             u.setRole(User.Role.STUDENT);
             s.setName(student.getName());
@@ -89,8 +169,9 @@ public class AdminController {
             s.setExpectedSalary(0);
             s.setPaperCount(0);
             s.setWorkExperience(0);
+            s.setPhoneNumber(student.getPhoneNumber());
             studentService.addStudent(s);
-            int id = studentService.getStudent(student.getName()).getId();
+            int id = studentService.getStudent(student.getPhoneNumber(),student.getName()).getId();
             String num = "S" + number + id;
             User u1 = userService.getUserByID(id);
             u1.setNumber(num);
@@ -103,6 +184,82 @@ public class AdminController {
         }
         return Map.of(
                 "student",student
+        );
+    }
+
+    @PostMapping("students")
+    public Map addStudents(@Valid @RequestBody List<Student> students){
+        students.forEach(student -> {
+            Student s = new Student();
+            if(student.getName() != null && student.getPhoneNumber()!=null){
+                if (studentService.getStudent(student.getPhoneNumber(), student.getName())!=null){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "学生已经存在！");
+                }
+                User u = new User();
+                u.setRole(User.Role.STUDENT);
+                s.setName(student.getName());
+                s.setUser(u);
+                s.setExpectedSalary(0);
+                s.setPaperCount(0);
+                s.setWorkExperience(0);
+                s.setPhoneNumber(student.getPhoneNumber());
+                studentService.addStudent(s);
+                int id = studentService.getStudent(student.getPhoneNumber(),student.getName()).getId();
+                String num = "S" + number + id;
+                User u1 = userService.getUserByID(id);
+                u1.setNumber(num);
+                u1.setPassword(encoder.encode(num));
+                userService.updateUser(u1);
+            }
+            else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Name, number cannot be empty.");
+            }
+        });
+        List<Student> ss = studentService.listStudents();
+        return Map.of(
+                "students",ss
+        );
+    }
+
+    //批量注册学生并填入相应信息，实际情况不可用，仅用于为测试添加信息
+    @PostMapping("studentInformation")
+    public Map addStudentsInformation(@Valid @RequestBody List<StudentInoVo> studentInoVos){
+        studentInoVos.forEach(studentInoVo -> {
+            Student student = studentInoVo.getStudent();
+            log.debug("{}+{}", student.getName(),student.getPhoneNumber());
+            Student s = new Student();
+            if(student.getName() != null && student.getPhoneNumber()!=null){
+                if (studentService.getStudent(student.getPhoneNumber(), student.getName())!=null){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "学生已经存在！");
+                }
+                User u = new User();
+                u.setRole(User.Role.STUDENT);
+                s.setName(student.getName());
+                s.setUser(u);
+                s.setExpectedSalary(0);
+                s.setPaperCount(0);
+                s.setWorkExperience(0);
+                s.setPhoneNumber(student.getPhoneNumber());
+                studentService.addStudent(s);
+                int id = studentService.getStudent(student.getPhoneNumber(),student.getName()).getId();
+                String num = "S" + number + id;
+                User u1 = userService.getUserByID(id);
+                u1.setNumber(num);
+                u1.setPassword(encoder.encode(num));
+                userService.updateUser(u1);
+                studentService.updateStudent(studentInoVo, id);
+            }
+            else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Name, number cannot be empty.");
+            }
+        });
+        List<Student> ss = studentService.listStudents();
+        return Map.of(
+                "students",ss
         );
     }
 
