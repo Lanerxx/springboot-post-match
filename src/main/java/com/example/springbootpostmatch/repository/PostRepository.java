@@ -1,5 +1,6 @@
 package com.example.springbootpostmatch.repository;
 
+import com.example.springbootpostmatch.entity.Enterprise;
 import com.example.springbootpostmatch.entity.Post;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,9 @@ public interface PostRepository extends BaseRepository<Post,Integer>{
 
     @Query("SELECT post FROM Post post")
     Optional<List<Post>> list();
+
+    @Query("SELECT post FROM Post post WHERE post.enterprise.id=:eid")
+    Optional<List<Post>> listPostByEnterpriseId(@Param("eid")int eid);
 
     Optional<Post> findById (int  id);
 
