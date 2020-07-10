@@ -1,6 +1,6 @@
 package com.example.springbootpostmatch.service;
 import com.example.springbootpostmatch.component.vo.EnterpriseInoVo;
-import com.example.springbootpostmatch.component.vo.StudentInoVo;
+import com.example.springbootpostmatch.component.vo.PostVo;
 import com.example.springbootpostmatch.entity.Enterprise;
 import com.example.springbootpostmatch.entity.Post;
 import com.example.springbootpostmatch.entity.Student;
@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -47,9 +49,6 @@ public class EnterpriseService {
         if (enterprise.getDetail() !=null){
             e.setDetail(enterprise.getDetail());
         }
-        if (enterprise.getGraduationDate()!=null){
-            e.setGraduationDate(enterprise.getGraduationDate());
-        }
         if (enterprise.getIndustry()!=null){
             e.setIndustry(enterprise.getIndustry());
         }
@@ -85,7 +84,6 @@ public class EnterpriseService {
                     break;
             }
         }
-
         if (enterpriseInoVo.getGenderCut()!=null){
             switch(enterpriseInoVo.getGenderCut()) {
                 case "男":
@@ -99,7 +97,6 @@ public class EnterpriseService {
                     break;
             }
         }
-
         if (enterpriseInoVo.getSchoolRankCut()!=null){
             switch(enterpriseInoVo.getSchoolRankCut()) {
                 case "985":
@@ -125,7 +122,6 @@ public class EnterpriseService {
                     break;
             }
         }
-
         if (enterpriseInoVo.getEducationCut()!=null){
             switch(enterpriseInoVo.getEducationCut()) {
                 case "博士":
@@ -168,11 +164,10 @@ public class EnterpriseService {
     public List<Enterprise> listEnterprises() {
         return enterpriseRepository.findAll();
     }
-
-    public Enterprise getEnterprise(String name){
-        return enterpriseRepository.findByName(name).orElse(null);
+    public Enterprise getEnterprise(String phoneNumber,String name){
+        log.debug("service :{}+{}", phoneNumber,name);
+        return enterpriseRepository.getEnterpriseByPhoneNumberAndName(phoneNumber,name).orElse(null);
     }
-
     public Enterprise getEnterprise(int id) {
         return enterpriseRepository.findById(id).orElse(null);
     }
@@ -187,6 +182,38 @@ public class EnterpriseService {
         postRepository.deleteById(id);
     }
 
+    public Post updatePost(PostVo postVo, int pid){
+        Post p = enterpriseService.getPost(pid);
+        if (postVo.getPost()!=null){
+            Post post = postVo.getPost();
+            if (post.getName()!=null){
+                p.setName(post.getName());
+            }
+            if (post.getCount()>0){
+                p.setCount(post.getCount());
+            }
+            if (post.getSalary()>0){
+                p.setSalary(post.getSalary());
+            }
+            if (post.getDetail()!=null){
+                p.setDetail(post.getDetail());
+            }
+        }
+
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (postVo.getEndTime()!=null){
+            LocalDateTime endTime = LocalDateTime.parse(postVo.getEndTime(), df);
+            p.setEndTime(endTime);
+        }
+        if (postVo.getStartTime()!=null){
+            LocalDateTime startTime = LocalDateTime.parse(postVo.getStartTime(), df);
+            p.setStartTime(startTime);
+        }
+        postRepository.save(p);
+        return p;
+    }
+
     public Post updatePost(Post post){
         postRepository.save(post);
         return post;
@@ -194,6 +221,10 @@ public class EnterpriseService {
 
     public List<Post> listPosts() {
         return postRepository.findAll();
+    }
+
+    public List<Post> listPost(int eid){
+        return postRepository.listPostByEnterpriseId(eid).orElse(null);
     }
 
     public Post getPost(int id) {
