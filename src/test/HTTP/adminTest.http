@@ -1,3 +1,194 @@
+//ADMNI:add enterprises
+POST http://localhost:8080/api/admin/enterprisesInformation
+Content-Type: application/json
+authorization: {{token}}
+
+[
+  {
+    "enterprise": {
+      "name": "阿里巴巴",
+      "detail": "阿里巴巴网络技术有限公司（简称：阿里巴巴集团或阿里巴巴）是以曾担任英语教师的马云为首的18人于1999年在浙江省杭州市创立的公司。 [1-2]阿里巴巴集团经营多项业务，另外也从关联公司的业务和服务中取得经营商业生态系统上的支援。业务和关联公司的业务包括：淘宝网、天猫、聚划算、全球速卖通、阿里巴巴国际交易市场、1688、阿里妈妈、阿里云、蚂蚁金服、菜鸟网络等。",
+      "majorCut": "软件工程,计算机科学与技术，通信结束，电信工程",
+      "nativePlace": "湖北省",
+      "lowestSalery": 4000,
+      "highestSalery": 20000,
+      "industry":"IT",
+      "location": "北京市",
+      "phoneNumber": "618299"
+    },
+    "genderCut":"无" ,
+    "schoolRankCut": "211",
+    "educationCut": "本科",
+    "foreignLanguageProficiency":"CET-4",
+    "enterpriseNature": "外企"
+
+  },
+  {
+    "enterprise": {
+      "name": "百度",
+      "detail": "百度网络技术有限公司",
+      "majorCut": "软件工程,计算机科学与技术，电信工程",
+      "nativePlace": "湖北省",
+      "lowestSalery": 5000,
+      "highestSalery": 20000,
+      "industry":"IT",
+      "location": "武汉市",
+      "phoneNumber": "618200"
+    },
+    "genderCut":"无" ,
+    "schoolRankCut": "985",
+    "educationCut": "本科",
+    "foreignLanguageProficiency":"CET-6",
+    "enterpriseNature": "国企"
+  }
+
+]
+
+###
+//ADMNI:add students
+POST http://localhost:8080/api/admin/studentInformation
+Content-Type: application/json
+authorization: {{token}}
+
+[
+  {"student": {
+    "name": "兰二",
+    "graduationSchoolName": "东北林业大学",
+    "major": "软件工程",
+    "nativePlace": "湖北省",
+    "expectedSalary": 20000,
+    "expectedPosition": "Python后端开发师",
+    "paperCount": 1,
+    "workExperience": 1,
+    "phoneNumber": "13907251456"
+     },
+    "gender":"男" ,
+    "schoolRank": "211",
+    "education": "硕士",
+    "foreignLanguageProficiency":"国外交流经验"
+  },
+  {
+    "student" : {
+    "name": "张三",
+    "grade": 77.0,
+    "graduationSchoolName": "野鸡大学",
+    "major": "航空航天工程",
+    "graduationDate": 2020,
+    "nativePlace": "北京市",
+    "expectedSalary": 3000,
+    "expectedPosition": "人事助力",
+    "expectedIndustry": "人事",
+    "employmentIntentionPlace": "北京市",
+    "phoneNumber": "13591816445",
+    "majorCourse": "管理学",
+    "skill": "ps",
+    "paperCount": 1,
+    "workExperience": 0
+     },
+    "gender": "男",
+    "schoolRank":"其他",
+    "education": "其他",
+    "foreignLanguageProficiency": "CET-4"
+  },
+  {
+    "student" : {
+      "name": "李四",
+      "grade": 80.0,
+      "graduationSchoolName": "西安大学",
+      "major": "航空航天工程",
+      "graduationDate": 2019,
+      "nativePlace": "成都市",
+      "expectedSalary": 3000,
+      "expectedPosition": "人事助理",
+      "expectedIndustry": "人事",
+      "employmentIntentionPlace": "北京市",
+      "phoneNumber": "18991816445",
+      "majorCourse": "管理学",
+      "skill": "ps,offic",
+      "paperCount": 1,
+      "workExperience": 0
+    },
+    "gender": "男",
+    "schoolRank":"专职",
+    "education": "本科",
+    "foreignLanguageProficiency": "CET-4"
+  },
+  {
+    "student" : {
+      "name": "赵五",
+      "grade": 90.0,
+      "graduationSchoolName": "北京大学",
+      "major": "软件工程",
+      "graduationDate": 2020,
+      "nativePlace": "北京市",
+      "expectedSalary": 15000,
+      "expectedPosition": "需求分析师",
+      "expectedIndustry": "IT",
+      "employmentIntentionPlace": "北京市",
+      "phoneNumber": "135918122245",
+      "majorCourse": "软件项目，java",
+      "skill": "java，python",
+      "paperCount": 5,
+      "workExperience": 1
+    },
+    "gender": "女",
+    "schoolRank":"985",
+    "education": "本科",
+    "foreignLanguageProficiency": "CET-6"
+  }
+]
+
+###
+//ADMNI:add enterprises
+POST http://localhost:8080/api/admin/enterprises
+Content-Type: application/json
+authorization: {{token}}
+
+[
+  {
+    "name": "阿里巴巴"
+  },
+  {
+    "name": "百度"
+  },
+  {
+    "name": "腾讯"
+  },
+  {
+    "name": "爱奇艺"
+  },
+  {
+    "name": "人人"
+  }
+]
+
+###
+//ADMNI:add students
+POST http://localhost:8080/api/admin/students
+Content-Type: application/json
+authorization: {{token}}
+
+[
+  {
+    "name": "张三"
+  },
+  {
+    "name": "李四"
+  },
+  {
+    "name": "赵五"
+  },
+  {
+    "name": "刘六"
+  },
+  {
+    "name": "齐七"
+  },
+  {
+    "name": "向八"
+  }
+]
+
 ###
 //ADMIN:delete student
 DELETE http://localhost:8080/api/admin/student/5
@@ -20,14 +211,13 @@ Accept: application/json
 authorization: {{token}}
 
 ###
-
 //ADMNI:add enterprise
 POST http://localhost:8080/api/admin/enterprise
 Content-Type: application/json
 authorization: {{token}}
 
 {
-  "name": "串串香企业"
+  "name": "香鹅掌企业"
 }
 ###
 //ADMIN:login
@@ -35,7 +225,6 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "name": "LANER",
   "number": "A10000",
   "password": "A10000"
 }
