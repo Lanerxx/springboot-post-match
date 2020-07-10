@@ -3,6 +3,7 @@ package com.example.springbootpostmatch.controller;
 import com.example.springbootpostmatch.component.vo.EnterpriseInoVo;
 import com.example.springbootpostmatch.component.vo.StudentInoVo;
 import com.example.springbootpostmatch.entity.Enterprise;
+import com.example.springbootpostmatch.entity.Post;
 import com.example.springbootpostmatch.entity.Student;
 import com.example.springbootpostmatch.entity.User;
 import com.example.springbootpostmatch.service.EnterpriseService;
@@ -35,6 +36,17 @@ public class AdminController {
     @Value("${my.number}")
     private int number;
 
+    @GetMapping("index")
+    public Map getIndex(){
+        List<Enterprise> enterprises = enterpriseService.listEnterprises();
+        List<Post> posts = enterpriseService.listPosts();
+        List<Student> students = studentService.listStudents();
+        return Map.of(
+                "enterprises",enterprises,
+                "posts",posts,
+                "students",students
+        );
+    }
 
     @PostMapping("enterprise")
     public Map addEnterprise(@Valid @RequestBody Enterprise enterprise){
