@@ -40,17 +40,11 @@ public class StudentService {
         if (student.getName() !=null){
             s.setName(student.getName());
         }
-        if (student.getBirthday() !=null){
-            s.setBirthday(student.getBirthday());
-        }
         if (student.getGraduationSchoolName()!=null){
             s.setGraduationSchoolName(student.getGraduationSchoolName());
         }
         if (student.getMajor()!=null){
             s.setMajor(student.getMajor());
-        }
-        if (student.getGraduationDate() !=null){
-            s.setGraduationDate(student.getGraduationDate());
         }
         if (student.getNativePlace()!=null){
             s.setNativePlace(student.getNativePlace());
@@ -158,8 +152,8 @@ public class StudentService {
         return s;
     }
 
-    public Student getStudent(String name){
-        return studentRepository.findByName(name).orElse(null);
+    public Student getStudent(String phoneNumber,String name){
+        return studentRepository.getStudentByNameAndPhoneNumber(phoneNumber,name).orElse(null);
     }
     public Student getStudentByUserNumber(int number){
         return studentRepository.getStudentsByUserNumber(number).orElse(null);
