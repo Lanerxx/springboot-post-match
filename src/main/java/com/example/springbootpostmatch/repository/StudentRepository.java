@@ -15,10 +15,13 @@ public interface StudentRepository extends BaseRepository<Student, Integer> {
     Optional<List<Student>> list();
 
     Optional<Student> findById (int  id);
-    Optional<Student> findByName(String name);
 
     @Query("SELECT s FROM Student  s WHERE s.user.number=:number")
     Optional<Student> getStudentsByUserNumber (@Param("number")int number);
+
+    @Query("SELECT s FROM Student  s WHERE s.phoneNumber=:phoneNumber AND s.name=:name")
+    Optional<Student> getStudentByNameAndPhoneNumber (@Param("phoneNumber")String phoneNumber,@Param("name")String name);
+
 
 
     void deleteById(int id);

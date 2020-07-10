@@ -14,9 +14,13 @@ public interface EnterpriseRepository extends BaseRepository<Enterprise,Integer>
     Optional<List<Enterprise>> list();
 
     Optional<Enterprise> findById (int  id);
-    Optional<Enterprise> findByName(String name);
+
     @Query("SELECT e FROM Enterprise  e WHERE e.user.number=:number")
     Optional<Enterprise> getEnterpriseByUserNumber (@Param("number")int number);
+
+    @Query("SELECT e FROM Enterprise  e WHERE e.phoneNumber=:phoneNumber AND e.name=:name")
+    Optional<Enterprise> getEnterpriseByPhoneNumberAndName (@Param("phoneNumber")String phoneNumber,@Param("name")String name);
+
 
     void deleteById(int id);
 }
