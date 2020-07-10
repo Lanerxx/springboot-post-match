@@ -18,6 +18,10 @@ public interface PostRepository extends BaseRepository<Post,Integer>{
     @Query("SELECT post FROM Post post WHERE post.enterprise.id=:eid")
     Optional<List<Post>> listPostByEnterpriseId(@Param("eid")int eid);
 
+    @Query("SELECT post FROM Post post WHERE post.enterprise.id=:eid AND post.name=:name")
+    Optional<Post> getPostByEnterpriseIdAndName(@Param("eid")int eid,@Param("name")String name);
+
+
     Optional<Post> findById (int  id);
 
     void deleteById(int id);

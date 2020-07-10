@@ -69,8 +69,13 @@ public class EnterpriseController {
     public Map addPost(@Valid @RequestBody PostVo postVo){
         Post p = new Post();
         Post post = postVo.getPost();
-        Enterprise e = enterpriseService.getEnterprise(requestComponent.getUid());
+        int eid = requestComponent.getUid();
+        Enterprise e = enterpriseService.getEnterprise(eid);
         if (post.getName()!=null && postVo.getStartTime() !=null && postVo.getEndTime()!=null){
+            if (enterpriseService.getPost(eid, post.getName())!=null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "你要添加的岗位已存在。");
+            }
             p.setName(post.getName());
             p.setEnterprise(e);
 
@@ -93,6 +98,45 @@ public class EnterpriseController {
         }
         return Map.of(
                 "post",p
+        );
+    }
+
+    @PostMapping("postsInformation")
+    public Map addPostsInformation(@Valid @RequestBody List<PostVo> postVos){
+        postVos.forEach(postVo -> {
+            Post p = new Post();
+            Post post = postVo.getPost();
+            int eid = requestComponent.getUid();
+            Enterprise e = enterpriseService.getEnterprise(eid);
+            if (post.getName()!=null && postVo.getStartTime() !=null && postVo.getEndTime()!=null){
+                if (enterpriseService.getPost(eid, post.getName())!=null){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "你要添加的岗位已存在。");
+                }
+                p.setName(post.getName());
+                p.setEnterprise(e);
+
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime startTime = LocalDateTime.parse(postVo.getStartTime(), df);
+                LocalDateTime endTime = LocalDateTime.parse(postVo.getEndTime(), df);
+                p.setStartTime(startTime);
+                p.setEndTime(endTime);
+
+                if (post.getDetail()!=null) p.setDetail(post.getDetail());
+                if (post.getSalary()>0) p.setSalary(post.getSalary());
+                else p.setSalary(0);
+                if (post.getCount()>0) p.setCount(post.getCount());
+                else p.setCount(0);
+                enterpriseService.addPost(p);
+            }
+            else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Name, StartTime, EndTime cannot be empty.");
+            }
+        });
+        List<Post> ps = enterpriseService.listPosts();
+        return Map.of(
+                "posts",ps
         );
     }
 
