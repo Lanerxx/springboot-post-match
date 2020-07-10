@@ -231,5 +231,9 @@ public class EnterpriseService {
         return postRepository.findById(id).orElse(null);
     }
 
+    public Post getPost(int eid , String name){
+        return postRepository.getPostByEnterpriseIdAndName(eid, name).orElse(null);
+    }
+
 
 }
