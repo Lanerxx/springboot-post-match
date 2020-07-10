@@ -26,7 +26,6 @@ public class Post {
     private Integer id;
     @NotNull
     private String name;
-    @NotNull
     private String detail;
     private int count;
     private int salary;

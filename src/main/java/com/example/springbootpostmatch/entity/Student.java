@@ -37,12 +37,12 @@ public class Student {
     @NotNull
     private String name;
     private Gender gender;
-    private LocalDate birthday;
+    private float grade;
     private String graduationSchoolName;
     private SchoolRank graduationSchoolRank;
     private String major;
     private Education education;
-    private LocalDate graduationDate;
+    private int graduationDate;
     private String nativePlace;
     private ForeignLanguageProficiency foreignlanguageproficiency;
     private int expectedSalary;

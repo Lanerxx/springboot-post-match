@@ -43,7 +43,6 @@ public class Enterprise {
     private EnterpriseNature enterpriseNature;
     private String industry;
     private String location;
-    private LocalDate graduationDate;
     private String phoneNumber;
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.REMOVE)
