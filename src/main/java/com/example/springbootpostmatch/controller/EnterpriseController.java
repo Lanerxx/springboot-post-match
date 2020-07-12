@@ -159,7 +159,10 @@ public class EnterpriseController {
                     "The Post you want to delete does not exist.");
         }
         enterpriseService.deletePost(pid);
-        return Map.of("massage", "Successful delete!");
+        List<Post> ps = enterpriseService.listPosts();
+        return Map.of(
+                "posts",ps
+        );
     }
 
     @GetMapping("posts")
