@@ -35,10 +35,10 @@ public class EnterpriseController {
     @GetMapping("index")
     public Map getIndex(){
         int eid = requestComponent.getUid();
-        Enterprise enterprise = enterpriseService.getEnterprise(eid);
+        EnterpriseInoVo enterpriseInoVo = enterpriseService.getEnterpriseInoVo(eid);
         List<Post> posts = enterpriseService.listPost(eid);
         return Map.of(
-                "enterprise", enterprise,
+                "enterprise", enterpriseInoVo,
                 "posts",posts
 
         );
@@ -57,16 +57,26 @@ public class EnterpriseController {
 
     @PatchMapping("information")
     public Map updateEnterpriseInformation(@RequestBody EnterpriseInoVo enterpriseInoVo){
+        log.debug("{}", enterpriseInoVo.getEnterprise().getDetail());
+        log.debug("{}", enterpriseInoVo.getEnterprise().getName());
+        log.debug("{}", enterpriseInoVo.getEducationCut());
+
         enterpriseService.updateEnterprise(enterpriseInoVo, requestComponent.getUid());
-        Enterprise enterprise = enterpriseService.getEnterprise(requestComponent.getUid());
+        EnterpriseInoVo enterpriseInoVo1 = enterpriseService.getEnterpriseInoVo(requestComponent.getUid());
+
         return Map.of(
-                "enterprise",enterprise
+                "enterprise",enterpriseInoVo1
         );
     }
 
     //post
     @PostMapping("post")
     public Map addPost(@Valid @RequestBody PostVo postVo){
+        log.debug("{}", "asdasdas");
+        log.debug("{}", postVo.getPost().getCount());
+        log.debug("{}", postVo.getPost().getName());
+        log.debug("{}", postVo.getStartTime());
+        log.debug("{}", postVo.getEndTime());
         Post p = new Post();
         Post post = postVo.getPost();
         int eid = requestComponent.getUid();
@@ -96,8 +106,9 @@ public class EnterpriseController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Name, StartTime, EndTime cannot be empty.");
         }
+        List<Post> ps = enterpriseService.listPosts();
         return Map.of(
-                "post",p
+                "posts",ps
         );
     }
 
@@ -161,10 +172,15 @@ public class EnterpriseController {
 
     @PatchMapping("post/information/{pid}")
     public Map updatePostInformation(@RequestBody PostVo postVo,@PathVariable int pid){
+        log.debug("{}", "asdasdas");
+        log.debug("{}", postVo.getPost().getCount());
+        log.debug("{}", postVo.getPost().getName());
+        log.debug("{}", postVo.getStartTime());
+        log.debug("{}", postVo.getEndTime());
         enterpriseService.updatePost(postVo, pid);
-        Post p = enterpriseService.getPost(pid);
+        List<Post> ps = enterpriseService.listPosts();
         return Map.of(
-                "post",p
+                "posts",ps
         );
     }
 }

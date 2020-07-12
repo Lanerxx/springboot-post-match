@@ -168,6 +168,64 @@ public class EnterpriseService {
         log.debug("service :{}+{}", phoneNumber,name);
         return enterpriseRepository.getEnterpriseByPhoneNumberAndName(phoneNumber,name).orElse(null);
     }
+
+    public EnterpriseInoVo getEnterpriseInoVo(int id){
+        Enterprise enterprise = enterpriseService.getEnterprise(id);
+        String enterpriseNature=null;
+        String genderCut=null;
+        String schoolRankCut=null;
+        String educationCut=null;
+        String foreignLanguageProficiency=null;
+        if (enterprise ==null){
+            return null;
+        }else {
+            EnterpriseInoVo enterpriseInoVo = new EnterpriseInoVo();
+            enterpriseInoVo.setEnterprise(enterprise);
+            Enterprise.EnterpriseNature nature = enterprise.getEnterpriseNature();
+            if(nature != null){
+                if (nature == Enterprise.EnterpriseNature.FOREIGN) enterpriseNature="外企";
+                if (nature == Enterprise.EnterpriseNature.STATE_OWNED) enterpriseNature="国企";
+                if (nature == Enterprise.EnterpriseNature.PRIVATE_ENTERPRISE) enterpriseNature="民企";
+            }
+            Student.Gender gender = enterprise.getGenderCut();
+            if(gender!=null){
+                if (gender ==Student.Gender.MALE) genderCut="男";
+                if (gender ==Student.Gender.FEMALE) genderCut="女";
+                if (gender ==Student.Gender.NONE) genderCut="无";
+            }
+            Student.Education education = enterprise.getEducationCut();
+            if (education!=null){
+                if (education ==Student.Education.DOCTOR) educationCut="博士";
+                if (education ==Student.Education.MASTER) educationCut="硕士";
+                if (education ==Student.Education.BACHELOR) educationCut="本科";
+                if (education ==Student.Education.HIGHER_VOCATIONAL_COLLEGE) educationCut="高职高专";
+                if (education ==Student.Education.OTHER) educationCut="其他";
+            }
+            Student.SchoolRank rank = enterprise.getSchoolRankCut();
+            if (rank !=null){
+                if (rank ==Student.SchoolRank._985) schoolRankCut="985";
+                if (rank ==Student.SchoolRank._211) schoolRankCut="211";
+                if (rank ==Student.SchoolRank.PROVINCIAL_KEY) schoolRankCut="省重点";                if (rank ==Student.SchoolRank.PROVINCIAL_KEY) schoolRankCut="";
+                if (rank ==Student.SchoolRank.GENERAL_UNDERGRADUATE) schoolRankCut="普通本科";
+                if (rank ==Student.SchoolRank.JUNIOR_COLLEGE) schoolRankCut="专科";
+                if (rank ==Student.SchoolRank.HIGHER_VOCATIONAL_COLLEGE) schoolRankCut="高职";
+                if (rank ==Student.SchoolRank.OTHER) schoolRankCut="其他";
+            }
+            Student.ForeignLanguageProficiency FLP = enterprise.getForeignLanguageProficiency();
+            if (FLP!=null){
+                if (FLP == Student.ForeignLanguageProficiency.ENGLISH_Foreign_Exchange_Experience) foreignLanguageProficiency="国外交流经验";
+                if (FLP == Student.ForeignLanguageProficiency.ENGLISH_CET_6) foreignLanguageProficiency="CET-6";
+                if (FLP == Student.ForeignLanguageProficiency.ENGLISH_CET_4) foreignLanguageProficiency="CET-4";
+                if (FLP == Student.ForeignLanguageProficiency.NONE) foreignLanguageProficiency="无";
+            }
+            enterpriseInoVo.setEducationCut(educationCut);
+            enterpriseInoVo.setSchoolRankCut(schoolRankCut);
+            enterpriseInoVo.setGenderCut(genderCut);
+            enterpriseInoVo.setForeignLanguageProficiency(foreignLanguageProficiency);
+            enterpriseInoVo.setEnterpriseNature(enterpriseNature);
+            return enterpriseInoVo;
+        }
+    }
     public Enterprise getEnterprise(int id) {
         return enterpriseRepository.findById(id).orElse(null);
     }
