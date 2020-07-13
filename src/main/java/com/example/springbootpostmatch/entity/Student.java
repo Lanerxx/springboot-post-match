@@ -25,7 +25,7 @@ public class Student {
         DOCTOR,MASTER,BACHELOR,HIGHER_VOCATIONAL_COLLEGE,OTHER
     }
     public enum ForeignLanguageProficiency{
-        ENGLISH_CET_6,ENGLISH_CET_4,ENGLISH_Foreign_Exchange_Experience,NONE
+        ENGLISH_Foreign_Exchange_Experience,ENGLISH_CET_6,ENGLISH_CET_4,NONE
     }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
