@@ -80,6 +80,8 @@ public class RegisterController {
             s.setExpectedSalary(0);
             s.setPaperCount(0);
             s.setWorkExperience(0);
+            s.setGrade(0);
+            s.setGraduationDate(0);
             s.setPhoneNumber(student.getPhoneNumber());
             studentService.addStudent(s);
             int id = studentService.getStudent(student.getPhoneNumber(),student.getName()).getId();
