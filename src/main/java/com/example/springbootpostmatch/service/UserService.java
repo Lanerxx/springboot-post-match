@@ -50,6 +50,10 @@ public class UserService {
         adminRepository.save(admin);
         return admin;
     }
+    public Admin getAdmin(int id){
+        Admin admin = adminRepository.findById(id).orElse(null);
+        return admin;
+    }
 
 
 
