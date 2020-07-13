@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -165,7 +166,6 @@ public class EnterpriseService {
         return enterpriseRepository.findAll();
     }
     public Enterprise getEnterprise(String phoneNumber,String name){
-        log.debug("service :{}+{}", phoneNumber,name);
         return enterpriseRepository.getEnterpriseByPhoneNumberAndName(phoneNumber,name).orElse(null);
     }
 
@@ -186,12 +186,16 @@ public class EnterpriseService {
                 if (nature == Enterprise.EnterpriseNature.FOREIGN) enterpriseNature="外企";
                 if (nature == Enterprise.EnterpriseNature.STATE_OWNED) enterpriseNature="国企";
                 if (nature == Enterprise.EnterpriseNature.PRIVATE_ENTERPRISE) enterpriseNature="民企";
+            }else {
+                enterpriseNature="民企";
             }
             Student.Gender gender = enterprise.getGenderCut();
             if(gender!=null){
                 if (gender ==Student.Gender.MALE) genderCut="男";
                 if (gender ==Student.Gender.FEMALE) genderCut="女";
                 if (gender ==Student.Gender.NONE) genderCut="无";
+            }else {
+                genderCut="无";
             }
             Student.Education education = enterprise.getEducationCut();
             if (education!=null){
@@ -200,6 +204,8 @@ public class EnterpriseService {
                 if (education ==Student.Education.BACHELOR) educationCut="本科";
                 if (education ==Student.Education.HIGHER_VOCATIONAL_COLLEGE) educationCut="高职高专";
                 if (education ==Student.Education.OTHER) educationCut="其他";
+            }else {
+                educationCut="其他";
             }
             Student.SchoolRank rank = enterprise.getSchoolRankCut();
             if (rank !=null){
@@ -210,6 +216,8 @@ public class EnterpriseService {
                 if (rank ==Student.SchoolRank.JUNIOR_COLLEGE) schoolRankCut="专科";
                 if (rank ==Student.SchoolRank.HIGHER_VOCATIONAL_COLLEGE) schoolRankCut="高职";
                 if (rank ==Student.SchoolRank.OTHER) schoolRankCut="其他";
+            }else {
+                schoolRankCut="其他";
             }
             Student.ForeignLanguageProficiency FLP = enterprise.getForeignLanguageProficiency();
             if (FLP!=null){
@@ -217,6 +225,8 @@ public class EnterpriseService {
                 if (FLP == Student.ForeignLanguageProficiency.ENGLISH_CET_6) foreignLanguageProficiency="CET-6";
                 if (FLP == Student.ForeignLanguageProficiency.ENGLISH_CET_4) foreignLanguageProficiency="CET-4";
                 if (FLP == Student.ForeignLanguageProficiency.NONE) foreignLanguageProficiency="无";
+            }else {
+                foreignLanguageProficiency="无";
             }
             enterpriseInoVo.setEducationCut(educationCut);
             enterpriseInoVo.setSchoolRankCut(schoolRankCut);
@@ -282,7 +292,7 @@ public class EnterpriseService {
     }
 
     public List<Post> listPost(int eid){
-        return postRepository.listPostByEnterpriseId(eid).orElse(null);
+        return postRepository.listPostByEnterpriseId(eid).orElse(new ArrayList<>());
     }
 
     public Post getPost(int id) {
