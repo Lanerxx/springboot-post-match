@@ -76,6 +76,12 @@ public class StudentService {
         if (student.getWorkExperience()>0){
             s.setWorkExperience(student.getWorkExperience());
         }
+        if (student.getGraduationDate()>0){
+            s.setGraduationDate(student.getGraduationDate());
+        }
+        if (student.getGrade()>0){
+            s.setGrade(student.getGrade());
+        }
 
         if (studentInoVo.getForeignLanguageProficiency()!=null){
             switch(studentInoVo.getForeignLanguageProficiency()){
@@ -104,6 +110,7 @@ public class StudentService {
                     break;
             }
         }
+
         if (studentInoVo.getSchoolRank()!=null){
             switch(studentInoVo.getSchoolRank()) {
                 case "985":
@@ -129,6 +136,7 @@ public class StudentService {
                     break;
             }
         }
+
         if (studentInoVo.getEducation()!=null){
             switch(studentInoVo.getEducation()) {
                 case "博士":
