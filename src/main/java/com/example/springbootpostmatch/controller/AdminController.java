@@ -1,11 +1,9 @@
 package com.example.springbootpostmatch.controller;
 
+import com.example.springbootpostmatch.component.RequestComponent;
 import com.example.springbootpostmatch.component.vo.EnterpriseInoVo;
 import com.example.springbootpostmatch.component.vo.StudentInoVo;
-import com.example.springbootpostmatch.entity.Enterprise;
-import com.example.springbootpostmatch.entity.Post;
-import com.example.springbootpostmatch.entity.Student;
-import com.example.springbootpostmatch.entity.User;
+import com.example.springbootpostmatch.entity.*;
 import com.example.springbootpostmatch.service.EnterpriseService;
 import com.example.springbootpostmatch.service.StudentService;
 import com.example.springbootpostmatch.service.UserService;
@@ -33,18 +31,34 @@ public class AdminController {
     private StudentService studentService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RequestComponent requestComponent;
+
+
     @Value("${my.number}")
     private int number;
 
     @GetMapping("index")
     public Map getIndex(){
-        List<Enterprise> enterprises = enterpriseService.listEnterprises();
-        List<Post> posts = enterpriseService.listPosts();
-        List<Student> students = studentService.listStudents();
+        Admin admin = userService.getAdmin(requestComponent.getUid());
         return Map.of(
-                "enterprises",enterprises,
-                "posts",posts,
+                "admin",admin
+        );
+    }
+    @GetMapping("students")
+    public Map getStudents(){
+        List<Student> students = studentService.listStudents();
+        students.forEach(e->{log.debug("{}", e.getName());});
+        return Map.of(
                 "students",students
+        );
+    }
+    @GetMapping("enterprises")
+    public Map getEnterprises(){
+        List<Enterprise> enterprises = enterpriseService.listEnterprises();
+        enterprises.forEach(e->{log.debug("{}", e.getName());});
+        return Map.of(
+                "enterprises",enterprises
         );
     }
 
@@ -73,8 +87,9 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Name, number cannot be empty.");
         }
+        List<Enterprise> es = enterpriseService.listEnterprises();
         return Map.of(
-                "enterprise",e
+                "enterprises",es
         );
     }
 
@@ -155,14 +170,9 @@ public class AdminController {
                     "The Enterprise you want to delete does not exist.");
         }
         enterpriseService.deleteEnterprise(eid);
-        return Map.of("massage", "Successful delete!");
-    }
-
-    @GetMapping("enterprises")
-    public Map listEnterprises(){
-        List<Enterprise> enterprises = enterpriseService.listEnterprises();
+        List<Enterprise> es = enterpriseService.listEnterprises();
         return Map.of(
-                "enterprises",enterprises
+                "enterprises",es
         );
     }
 
@@ -194,8 +204,9 @@ public class AdminController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Name, number cannot be empty.");
         }
+        List<Student> ss = studentService.listStudents();
         return Map.of(
-                "student",student
+                "students",ss
         );
     }
 
@@ -235,7 +246,6 @@ public class AdminController {
         );
     }
 
-    //批量注册学生并填入相应信息，实际情况不可用，仅用于为测试添加信息
     @PostMapping("studentInformation")
     public Map addStudentsInformation(@Valid @RequestBody List<StudentInoVo> studentInoVos){
         studentInoVos.forEach(studentInoVo -> {
@@ -254,6 +264,8 @@ public class AdminController {
                 s.setExpectedSalary(0);
                 s.setPaperCount(0);
                 s.setWorkExperience(0);
+                s.setGrade(0);
+                s.setGraduationDate(0);
                 s.setPhoneNumber(student.getPhoneNumber());
                 studentService.addStudent(s);
                 int id = studentService.getStudent(student.getPhoneNumber(),student.getName()).getId();
@@ -282,14 +294,11 @@ public class AdminController {
                     "The Student you want to delete does not exist.");
         }
         studentService.deleteStudent(sid);
-        return Map.of("massage", "Successful delete!");
-    }
-
-    @GetMapping("students")
-    public Map listStudents(){
-        List<Student> students = studentService.listStudents();
+        List<Student> ss = studentService.listStudents();
         return Map.of(
-                "students",students
+                "students",ss
         );
     }
+
+
 }
