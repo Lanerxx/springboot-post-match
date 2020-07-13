@@ -13,6 +13,6 @@ public class EnterpriseServicetTest {
 
     @Test
     public void test_postMatch(){
-        enterpriseService.postMatch(1, enterpriseService.getEnterprise(40));
+        enterpriseService.postMatch(5, enterpriseService.getEnterprise(40));
     }
 }

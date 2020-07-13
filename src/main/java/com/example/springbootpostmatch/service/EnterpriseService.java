@@ -50,6 +50,7 @@ public class EnterpriseService {
         return enterprise;
     }
     public Enterprise updateEnterprise(EnterpriseInoVo enterpriseInoVo,int eid){
+        log.debug("{}", enterpriseInoVo.getGenderCut());
         Enterprise e = enterpriseService.getEnterprise(eid);
         Enterprise enterprise = enterpriseInoVo.getEnterprise();
         if (enterprise.getName() !=null){
@@ -414,7 +415,7 @@ public class EnterpriseService {
                 fieldValue = field.get(object); //得到属性值
                 Type fieldType =field.getGenericType();//得到属性类型
                 String fieldName = field.getName(); // 得到属性名
-                System.out.println("属性类型："+fieldType+",属性名："+fieldName+",属性值："+fieldValue);
+                System.out.println("属性类型："+fieldType+",属性名："+fieldName);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
