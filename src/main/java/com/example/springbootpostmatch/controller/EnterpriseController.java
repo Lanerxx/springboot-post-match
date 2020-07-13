@@ -106,7 +106,7 @@ public class EnterpriseController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Name, StartTime, EndTime cannot be empty.");
         }
-        List<Post> ps = enterpriseService.listPosts();
+        List<Post> ps = enterpriseService.listPost(eid);
         return Map.of(
                 "posts",ps
         );
@@ -145,21 +145,21 @@ public class EnterpriseController {
                         "Name, StartTime, EndTime cannot be empty.");
             }
         });
-        List<Post> ps = enterpriseService.listPosts();
+        List<Post> ps = enterpriseService.listPost(requestComponent.getUid());
         return Map.of(
                 "posts",ps
         );
     }
 
     @DeleteMapping("post/{pid}")
-    public Map deleteEnterprise(@PathVariable int pid){
+    public Map deletePost(@PathVariable int pid){
 
         if (enterpriseService.getPost(pid)==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "The Post you want to delete does not exist.");
         }
         enterpriseService.deletePost(pid);
-        List<Post> ps = enterpriseService.listPosts();
+        List<Post> ps = enterpriseService.listPost(requestComponent.getUid());
         return Map.of(
                 "posts",ps
         );
@@ -167,7 +167,7 @@ public class EnterpriseController {
 
     @GetMapping("posts")
     public Map listPosts(){
-        List<Post> posts = enterpriseService.listPosts();
+        List<Post> posts = enterpriseService.listPost(requestComponent.getUid());
         return Map.of(
                 "posts",posts
         );
@@ -175,13 +175,8 @@ public class EnterpriseController {
 
     @PatchMapping("post/information/{pid}")
     public Map updatePostInformation(@RequestBody PostVo postVo,@PathVariable int pid){
-        log.debug("{}", "asdasdas");
-        log.debug("{}", postVo.getPost().getCount());
-        log.debug("{}", postVo.getPost().getName());
-        log.debug("{}", postVo.getStartTime());
-        log.debug("{}", postVo.getEndTime());
         enterpriseService.updatePost(postVo, pid);
-        List<Post> ps = enterpriseService.listPosts();
+        List<Post> ps = enterpriseService.listPost(requestComponent.getUid());
         return Map.of(
                 "posts",ps
         );
