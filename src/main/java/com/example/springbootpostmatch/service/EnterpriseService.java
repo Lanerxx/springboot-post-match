@@ -8,6 +8,9 @@ import com.example.springbootpostmatch.entity.Post;
 import com.example.springbootpostmatch.entity.Student;
 import com.example.springbootpostmatch.repository.EnterpriseRepository;
 import com.example.springbootpostmatch.repository.PostRepository;
+import com.hankcs.hanlp.HanLP;
+import com.huaban.analysis.jieba.JiebaSegmenter;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +20,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -77,6 +80,9 @@ public class EnterpriseService {
         if (enterprise.getPhoneNumber() !=null){
             e.setPhoneNumber(enterprise.getPhoneNumber());
         }
+        if (enterprise.getOtherRequirements()!=null){
+            e.setOtherRequirements(enterprise.getOtherRequirements());
+        }
 
         if(enterpriseInoVo.getForeignLanguageProficiency()!=null){
             switch(enterpriseInoVo.getForeignLanguageProficiency()) {
@@ -93,6 +99,8 @@ public class EnterpriseService {
                     e.setForeignLanguageProficiency(Student.ForeignLanguageProficiency.NONE);
                     break;
             }
+        }else {
+            e.setForeignLanguageProficiency(Student.ForeignLanguageProficiency.NONE);
         }
         if (enterpriseInoVo.getGenderCut()!=null){
             switch(enterpriseInoVo.getGenderCut()) {
@@ -106,6 +114,8 @@ public class EnterpriseService {
                     e.setGenderCut(Student.Gender.NONE);
                     break;
             }
+        }else {
+            e.setGenderCut(Student.Gender.NONE);
         }
         if (enterpriseInoVo.getSchoolRankCut()!=null){
             switch(enterpriseInoVo.getSchoolRankCut()) {
@@ -131,6 +141,8 @@ public class EnterpriseService {
                     e.setSchoolRankCut(Student.SchoolRank.OTHER);
                     break;
             }
+        }else {
+            e.setSchoolRankCut(Student.SchoolRank.OTHER);
         }
         if (enterpriseInoVo.getEducationCut()!=null){
             switch(enterpriseInoVo.getEducationCut()) {
@@ -150,6 +162,8 @@ public class EnterpriseService {
                     e.setEducationCut(Student.Education.OTHER);
                     break;
             }
+        }else {
+            e.setEducationCut(Student.Education.OTHER);
         }
         if (enterpriseInoVo.getEnterpriseNature()!=null){
             switch (enterpriseInoVo.getEnterpriseNature()){
@@ -163,6 +177,8 @@ public class EnterpriseService {
                     e.setEnterpriseNature(Enterprise.EnterpriseNature.STATE_OWNED);
                     break;
             }
+        }else {
+            e.setEnterpriseNature(Enterprise.EnterpriseNature.PRIVATE_ENTERPRISE);
         }
         enterpriseRepository.save(e);
         return enterpriseInoVo.getEnterprise();
@@ -337,9 +353,11 @@ public class EnterpriseService {
     //验证性别是否符合要求
     //性别与要求一致或性别要求为无
     public boolean verifyGender(Student.Gender gender,Student.Gender genderCut){
+        log.debug("genfer:{} /genderCut:{}", gender,genderCut);
+        log.debug("genferIndex:{} /genderCutIndex:{} /len:{}",getGenderIndex(gender),getGenderIndex(genderCut),Student.Gender.values().length);
         boolean qualified = false;
         log.debug("qualified init:{}",qualified);
-        if (getGenderIndex(gender) == getGenderIndex(genderCut) || getGenderIndex(genderCut)==Student.Gender.values().length ) qualified = true;
+        if (getGenderIndex(gender) == getGenderIndex(genderCut) || getGenderIndex(genderCut)==Student.Gender.values().length-1 ) qualified = true;
         log.debug("qualified return:{}",qualified);
         return qualified;
     }
@@ -392,9 +410,93 @@ public class EnterpriseService {
     public boolean verifyForeignLanguageProficiency(Student.ForeignLanguageProficiency foreignLanguageProficiency,Student.ForeignLanguageProficiency foreignLanguageProficiencyCut){
         boolean qualified = false;
         if (getForeignLanguageProficiencyIndex(foreignLanguageProficiency) <= getForeignLanguageProficiencyIndex(foreignLanguageProficiencyCut)
-        || getForeignLanguageProficiencyIndex(foreignLanguageProficiencyCut) ==Student.ForeignLanguageProficiency.values().length)
+        || getForeignLanguageProficiencyIndex(foreignLanguageProficiencyCut) ==Student.ForeignLanguageProficiency.values().length-1)
             qualified = true;
         return qualified;
+    }
+
+    //HanLp短语分词
+    public List<String> participlesByHanLPExtractPhrase(String s){
+        return HanLP.extractPhrase(s, 5);
+    }
+
+    //标点符号分词（专业/岗位名/期望行业）
+    public List<String> participlesByPunctuation(String s){
+        return Arrays.asList(s.split("、|，|。|；|？|！|,|\\.|;|\\?|!|]"));
+    }
+
+    //结巴普通分词（个人陈述/地名）
+    public List<String> participlesByJiebaSimple(String s){
+        JiebaSegmenter segmenter = new JiebaSegmenter();
+        return segmenter.sentenceProcess(s);
+    }
+
+    //计算词组的余玄相似度
+    public double getSimilarity(List<String> PhraseList1,List<String> PhraseList2){
+//        System.out.println("PhraseList1 :"+PhraseList1);
+//        System.out.println("PhraseList2 :"+PhraseList2);
+
+        //合并分词结果
+        List<String> resultMergeList = new ArrayList<String>();
+        resultMergeList.addAll(PhraseList1);
+        resultMergeList.addAll(PhraseList2);
+//        System.out.println("resultMergeList :"+resultMergeList);
+
+        //去掉重复元素
+        for  ( int  i  =   0 ; i  <  resultMergeList.size()  -   1 ; i ++ )  {
+            for  ( int  j  =  resultMergeList.size()  -   1 ; j  >  i; j -- )  {
+                if  (resultMergeList.get(j).equals(resultMergeList.get(i)))  {
+                    resultMergeList.remove(j);
+                }
+            }
+        }
+//        System.out.println("resultMergeList2 :"+resultMergeList);
+
+        //计算词频
+        int[] resultStatistic1 = new int[resultMergeList.size()];
+//        System.out.println("resultStatistic1 :1111");
+        for (int i = 0; i < resultMergeList.size(); i++) {
+//            System.out.println("resultStatistic1[] :"+ resultStatistic1[i]);
+            resultStatistic1[i] = Collections.frequency(PhraseList1, resultMergeList.get(i));
+//            System.out.println("resultStatistic1[] :"+ resultStatistic1[i]);
+        }
+        int[] resultStatistic2 = new int[resultMergeList.size()];
+        for (int i = 0; i < resultMergeList.size(); i++) {
+            resultStatistic2[i] = Collections.frequency(PhraseList2,  resultMergeList.get(i));
+        }
+//        System.out.print("[");
+//        for (int i = 0; i < resultStatistic1.length; i++) {
+//            System.out.print(resultStatistic1[i]+",");
+//        }
+//        System.out.print("]");System.out.println();
+//        System.out.print("[");
+//        for (int i = 0; i < resultStatistic2.length; i++) {
+//            System.out.print(resultStatistic2[i]+",");
+//        }
+//        System.out.print("]");
+
+        //计算余弦值
+        double dividend = 0;
+        double divisor1 = 0;
+        double divisor2 = 0;
+        for (int i = 0; i < resultStatistic1.length; i++) {
+            dividend += resultStatistic1[i] * resultStatistic2[i];
+            divisor1 += Math.pow(resultStatistic1[i], 2);
+            divisor2 += Math.pow(resultStatistic2[i], 2);
+        }
+        double similarity = dividend / (Math.sqrt(divisor1) * Math.sqrt(divisor2));
+//        System.out.println("余弦值："+similarity);
+        return similarity;
+    }
+
+    //标点符号分词 + 计算词组的余玄相似度
+    public double getSimilarityByPunctuation(String stu,String cut){
+        return getSimilarity(participlesByPunctuation(stu),participlesByPunctuation(cut));
+    }
+
+    //结巴普通分词 + 计算词组的余玄相似度
+    public double getSimilarityByJiebaSimple(String stu,String cut){
+        return getSimilarity(participlesByJiebaSimple(stu), participlesByJiebaSimple(cut));
     }
 
     /**
@@ -429,6 +531,7 @@ public class EnterpriseService {
         return flag;
     }
 
+    //筛选硬性要求：性别、学校等级、文凭等级、外语水平，返回合格学生
     public List<Student> getQualifiedStudents(Enterprise enterprise){
         List<Student> qualifiedStudents = new ArrayList<>();
         Student.Gender genderCut = enterprise.getGenderCut();
@@ -446,6 +549,90 @@ public class EnterpriseService {
         });
         return qualifiedStudents;
     }
+
+    //计算软性要求：专业、岗位名、期望行业、地点、个人陈述，返回学生以及队员余玄相似度加权值
+    public List<StudentMatchVo> getWeightedStudents(List<Student> students,Enterprise enterprise,Post post){
+        List<StudentMatchVo> studentInoVos = new ArrayList<>();
+        String majorEnterprise = enterprise.getMajorCut();
+        String namePost = post.getName();
+        String industryEnterprise = enterprise.getIndustry();
+        String locationEnterprise = enterprise.getLocation();
+        String otherRequirements = enterprise.getOtherRequirements();
+        int highestSalary = enterprise.getHighestSalery();
+        int salary = post.getSalary();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        int date = Integer.parseInt(df.format(new Date()).substring(0,4));
+        log.debug("{}", date);
+        students.forEach(student -> {
+            StudentMatchVo StudentMatchVo = new StudentMatchVo();
+            StudentMatchVo.setScore(0);
+            StudentMatchVo.setStudent(student);
+            String major = student.getMajor();
+            String postS = student.getExpectedPosition();
+            String industry = student.getExpectedIndustry();
+            String nativePlace = student.getNativePlace();
+            String intentionPlace = student.getEmploymentIntentionPlace();
+            String personalStatement = student.getPersonalStatement();
+            int graduationDate = student.getGraduationDate();
+            int expectedSalary = student.getExpectedSalary();
+            int paperCount = student.getPaperCount();
+            int workExperience = student.getWorkExperience();
+
+            //标点符号分词 + 计算余玄相似度（专业/岗位名/期望行业）
+            double majorScore = getSimilarityByPunctuation(major,majorEnterprise);
+            double postScore = getSimilarityByPunctuation(namePost, postS);
+            double industryScore = getSimilarityByPunctuation(industry, industryEnterprise);
+//            log.debug("majorScore:{} /postScore:{} /industryScore:{}",majorScore,postScore,industryScore);
+
+            //结巴普通分词 + 计算余玄相似度（个人陈述/地名）
+            double nativeLocationScore = getSimilarityByJiebaSimple(nativePlace, locationEnterprise);
+            double intentionLocationScore = getSimilarityByJiebaSimple(intentionPlace, locationEnterprise);
+//            double otherScore = getSimilarityByJiebaSimple(personalStatement, otherRequirements);
+//            log.debug("nativeLocationScore:{} /intentionLocationScore:{} /otherScore:{}"
+//                    ,nativeLocationScore,intentionLocationScore);
+
+            //数值类型，副权重记分（薪水/毕业时间/论文数/工作经验）
+            double salaryScore = salary > expectedSalary ? 0.2 : 0;
+            if (salaryScore == 0 && highestSalary > expectedSalary) salaryScore =0.1;
+            double dateScore = 0;
+            if (date == graduationDate ||Math.abs(date-graduationDate)<2) dateScore = 0.1;
+            double paperScore = paperCount/10;
+            double workScore = workExperience/10;
+//            log.debug("salaryScore:{} /dateScore:{} /paperScore:{} /workScore:{}"
+//                    ,salaryScore,dateScore,paperScore,workScore);
+
+            //总分
+            double score = majorScore + postScore + industryScore +
+                    nativeLocationScore + intentionLocationScore +
+                    salaryScore + dateScore + paperScore + workScore;
+            log.debug("name:{} ----:score{}", student.getName(),score);
+
+            StudentMatchVo.setScore(score);
+            studentInoVos.add(StudentMatchVo);
+        });
+        return studentInoVos;
+    }
+
+    //根据计算好的权重值给学生排序排序
+    public List<StudentMatchVo> getRankingStudents(List<StudentMatchVo> studentMatchVos){
+        for (int i = 1; i < studentMatchVos.size(); i++) {  //第一层for循环,用来控制冒泡的次数
+            for (int j = 0; j < studentMatchVos.size()-1; j++) { //第二层for循环,用来控制冒泡一层层到最后
+                    //如果前一个数比后一个数大,两者调换 ,意味着泡泡向上走了一层
+                if (studentMatchVos.get(j).getScore() < studentMatchVos.get(j+1).getScore() ){
+                    double tempScore = studentMatchVos.get(j).getScore();
+                    Student tempStudent = studentMatchVos.get(j).getStudent();
+
+                    studentMatchVos.get(j).setStudent(studentMatchVos.get(j+1).getStudent());
+                    studentMatchVos.get(j).setScore(studentMatchVos.get(j+1).getScore());
+                    studentMatchVos.get(j+1).setStudent(tempStudent);
+                    studentMatchVos.get(j+1).setScore(tempScore);
+                }
+            }
+        }
+        return studentMatchVos;
+    }
+
+    //岗位匹配
     public List<StudentMatchVo> postMatch(int pid,Enterprise enterprise){
         if (objCheckIsNull(enterprise)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -454,25 +641,18 @@ public class EnterpriseService {
         Post post = enterpriseService.getPost(pid);
         List<StudentMatchVo> studentMatchVos =new ArrayList<>();
         if (post!=null){
-            String location = enterprise.getLocation();
-            String majorCut = enterprise.getMajorCut();
-            int lowestSalery = enterprise.getLowestSalery();
-            int highestSalery = enterprise.getHighestSalery();
-
-            int count = post.getCount();
-            int salary = post.getSalary();
             List<Student> qualifiedStudents = getQualifiedStudents(enterprise);
-            log.debug("完成第一步");
             qualifiedStudents.forEach(student -> {
                 log.debug("name:{} /Education:{} /Gender:{} /SchoolRank:{} /FL:{}",
                         student.getName(),student.getEducation(),student.getGender(),student.getGraduationSchoolRank()
                 ,student.getForeignlanguageproficiency());
             });
+
+            studentMatchVos = getRankingStudents(getWeightedStudents(qualifiedStudents, enterprise, post));
+            studentMatchVos.forEach(studentMatchVo -> {
+                log.debug("name:{} ----:score{}", studentMatchVo.getStudent().getName(),studentMatchVo.getScore());
+            });
         }
-        return null;
+        return studentMatchVos;
     }
-
-
-
-
 }
