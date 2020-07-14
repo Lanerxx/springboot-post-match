@@ -44,6 +44,7 @@ public class Enterprise {
     private String industry;
     private String location;
     private String phoneNumber;
+    private String otherRequirements;
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.REMOVE)
     private List<Post> posts;

@@ -54,6 +54,7 @@ public class Student {
     private String skill;
     private int paperCount;
     private int workExperience;
+    private String personalStatement;
 
     @Column(columnDefinition = "timestamp default current_timestamp",
             insertable = false,
