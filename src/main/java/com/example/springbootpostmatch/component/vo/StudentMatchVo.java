@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class StudentMatchVo {
     Student student;
-    float score;
+    double score;
 }
