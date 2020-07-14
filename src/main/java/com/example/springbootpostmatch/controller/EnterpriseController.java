@@ -4,6 +4,7 @@ import com.example.springbootpostmatch.component.RequestComponent;
 import com.example.springbootpostmatch.component.vo.EnterpriseInoVo;
 import com.example.springbootpostmatch.component.vo.PostVo;
 import com.example.springbootpostmatch.component.vo.StudentInoVo;
+import com.example.springbootpostmatch.component.vo.StudentMatchVo;
 import com.example.springbootpostmatch.entity.Enterprise;
 import com.example.springbootpostmatch.entity.Post;
 import com.example.springbootpostmatch.entity.Student;
@@ -44,23 +45,20 @@ public class EnterpriseController {
         );
     }
 
-    @GetMapping("match")
-    public Map getMatch(){
+    @GetMapping("match/post/{pid}")
+    public Map getMatch(@PathVariable int pid){
         Enterprise enterprise = enterpriseService.getEnterprise(requestComponent.getUid());
-        List<Student> students = studentService.listStudents();
+        List<StudentMatchVo> studentMatchVos = enterpriseService.postMatch(pid,enterprise);
         return Map.of(
                 "enterprise", enterprise,
-                "students",students
+                "students",studentMatchVos
 
         );
     }
 
     @PatchMapping("information")
     public Map updateEnterpriseInformation(@RequestBody EnterpriseInoVo enterpriseInoVo){
-        log.debug("{}", enterpriseInoVo.getEnterprise().getDetail());
-        log.debug("{}", enterpriseInoVo.getEnterprise().getName());
         log.debug("{}", enterpriseInoVo.getEducationCut());
-
         enterpriseService.updateEnterprise(enterpriseInoVo, requestComponent.getUid());
         EnterpriseInoVo enterpriseInoVo1 = enterpriseService.getEnterpriseInoVo(requestComponent.getUid());
 
