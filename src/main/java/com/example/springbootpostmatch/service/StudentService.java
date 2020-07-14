@@ -82,6 +82,9 @@ public class StudentService {
         if (student.getGrade()>0){
             s.setGrade(student.getGrade());
         }
+        if (student.getPersonalStatement()!=null){
+            s.setPersonalStatement(student.getPersonalStatement());
+        }
 
         if (studentInoVo.getForeignLanguageProficiency()!=null){
             switch(studentInoVo.getForeignLanguageProficiency()){
@@ -99,6 +102,8 @@ public class StudentService {
                     break;
             }
 
+        }else {
+            s.setForeignlanguageproficiency(Student.ForeignLanguageProficiency.NONE);
         }
         if (studentInoVo.getGender()!=null){
             switch(studentInoVo.getGender()) {
@@ -135,6 +140,8 @@ public class StudentService {
                     s.setGraduationSchoolRank(Student.SchoolRank.OTHER);
                     break;
             }
+        }else {
+            s.setGraduationSchoolRank(Student.SchoolRank.OTHER);
         }
 
         if (studentInoVo.getEducation()!=null){
@@ -155,6 +162,8 @@ public class StudentService {
                     s.setEducation(Student.Education.OTHER);
                     break;
             }
+        }else {
+            s.setEducation(Student.Education.OTHER);
         }
         studentRepository.save(s);
         return s;
