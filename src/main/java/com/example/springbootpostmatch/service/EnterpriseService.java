@@ -552,6 +552,7 @@ public class EnterpriseService {
 
     //计算软性要求：专业、岗位名、期望行业、地点、个人陈述，返回学生以及队员余玄相似度加权值
     public List<StudentMatchVo> getWeightedStudents(List<Student> students,Enterprise enterprise,Post post){
+        double totalScore = 6.5;
         List<StudentMatchVo> studentInoVos = new ArrayList<>();
         String majorEnterprise = enterprise.getMajorCut();
         String namePost = post.getName();
@@ -577,9 +578,10 @@ public class EnterpriseService {
             int expectedSalary = student.getExpectedSalary();
             int paperCount = student.getPaperCount();
             int workExperience = student.getWorkExperience();
+            float grade = student.getGrade();
 
             //标点符号分词 + 计算余玄相似度（专业/岗位名/期望行业）
-            double majorScore = getSimilarityByPunctuation(major,majorEnterprise);
+            double majorScore = getSimilarityByPunctuation(major,majorEnterprise)*2;
             double postScore = getSimilarityByPunctuation(namePost, postS);
             double industryScore = getSimilarityByPunctuation(industry, industryEnterprise);
 //            log.debug("majorScore:{} /postScore:{} /industryScore:{}",majorScore,postScore,industryScore);
@@ -587,7 +589,7 @@ public class EnterpriseService {
             //结巴普通分词 + 计算余玄相似度（个人陈述/地名）
             double nativeLocationScore = getSimilarityByJiebaSimple(nativePlace, locationEnterprise);
             double intentionLocationScore = getSimilarityByJiebaSimple(intentionPlace, locationEnterprise);
-//            double otherScore = getSimilarityByJiebaSimple(personalStatement, otherRequirements);
+            double otherScore = getSimilarityByJiebaSimple(personalStatement, otherRequirements);
 //            log.debug("nativeLocationScore:{} /intentionLocationScore:{} /otherScore:{}"
 //                    ,nativeLocationScore,intentionLocationScore);
 
@@ -597,14 +599,25 @@ public class EnterpriseService {
             double dateScore = 0;
             if (date == graduationDate ||Math.abs(date-graduationDate)<2) dateScore = 0.1;
             double paperScore = paperCount/10;
+            if (paperScore > 1) paperScore = 1;
             double workScore = workExperience/10;
+            if (workScore > 1) workScore = 1;
+            double gradeScore = 0;
+            if (grade > 90) gradeScore =1;
+            else if (grade >88) gradeScore = 0.85;
+            else if (grade > 85) gradeScore = 0.7;
+            else if (grade > 80) gradeScore = 0.5;
+            else if (grade > 70) gradeScore = 0.3;
+            else if (grade > 60) gradeScore = 0.1;
+
 //            log.debug("salaryScore:{} /dateScore:{} /paperScore:{} /workScore:{}"
 //                    ,salaryScore,dateScore,paperScore,workScore);
 
             //总分
-            double score = majorScore + postScore + industryScore +
+            double score = (majorScore + postScore + industryScore +
                     nativeLocationScore + intentionLocationScore +
-                    salaryScore + dateScore + paperScore + workScore;
+                    salaryScore + dateScore + paperScore + workScore + gradeScore)/totalScore;
+            if (score >=1) score = 0.99;
             log.debug("name:{} ----:score{}", student.getName(),score);
 
             StudentMatchVo.setScore(score);

@@ -179,4 +179,14 @@ public class EnterpriseController {
                 "posts",ps
         );
     }
+
+    @GetMapping("downloadResume/{sid}")
+    public Map downloadResume(@PathVariable int sid){
+        boolean flag = studentService.downloadResume(sid);
+        String fileName = "./file/"+ studentService.getStudent(sid).getName()+ ".xls";
+        return Map.of(
+                "flag",flag,
+                "fileName",fileName
+        );
+    }
 }
